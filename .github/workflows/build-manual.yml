@@ -1,0 +1,33 @@
+name: Manual Build
+
+on:
+  workflow_dispatch:   # 只允许手动触发
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure
+        run: cmake -S src -B build -G "Ninja Multi-Config"
+
+      - name: Build Release
+        run: cmake --build build --config Release
+
+      - name: Build Debug
+        run: cmake --build build --config Debug
+
+      - name: Upload Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenSteamTool-Release
+          path: build/Release/
+
+      - name: Upload Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenSteamTool-Debug
+          path: build/Debug/
